@@ -1274,10 +1274,17 @@ func system_fs_handleNewObjects(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		//Check if the filename contains web-unsafe characters
+		if !utils.FilenameIsWebSafe(filename) {
+			utils.SendErrorResponse(w, "Filename contains illegal characters")
+			return
+		}
+
 		//Check if the file already exists. If yes, fix its filename.
 		newfilePath := filepath.ToSlash(filepath.Join(rpath, filename))
 
-		if fileType == "file" {
+		switch fileType {
+		case "file":
 			for fshAbs.FileExists(newfilePath) {
 				utils.SendErrorResponse(w, "Given filename already exists")
 				return
@@ -1300,7 +1307,7 @@ func system_fs_handleNewObjects(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-		} else if fileType == "folder" {
+		case "folder":
 			if fshAbs.FileExists(newfilePath) {
 				utils.SendErrorResponse(w, "Given folder already exists")
 				return
@@ -1914,15 +1921,22 @@ func system_fs_handleOpr(w http.ResponseWriter, r *http.Request) {
 
 				//Check if the target dir is not readonly
 				accmode := userinfo.GetPathAccessPermission(string(vsrcFile))
-				if accmode == arozfs.FsReadOnly {
+				switch accmode {
+				case arozfs.FsReadOnly:
 					utils.SendErrorResponse(w, "This directory is Read Only")
 					return
-				} else if accmode == arozfs.FsDenied {
+				case arozfs.FsDenied:
 					utils.SendErrorResponse(w, "Access Denied")
 					return
 				}
 
 				thisFilename := filepath.Base(newFilenames[i])
+
+				//Check if the new filename contains web-unsafe characters
+				if !utils.FilenameIsWebSafe(thisFilename) {
+					utils.SendErrorResponse(w, "Filename contains illegal characters")
+					return
+				}
 				//Check if the name already exists. If yes, return false
 				if srcFshAbs.FileExists(filepath.Join(filepath.Dir(rsrcFile), thisFilename)) {
 					utils.SendErrorResponse(w, "File already exists")
@@ -2516,8 +2530,6 @@ func system_fs_getFileProperties(w http.ResponseWriter, r *http.Request) {
 	Usage: Pass in dir like the following examples:
 	AOR:/Desktop	<= Open /user/{username}/Desktop
 	S1:/			<= Open {uuid=S1}/
-
-
 */
 
 func system_fs_handleList(w http.ResponseWriter, r *http.Request) {
@@ -2526,8 +2538,6 @@ func system_fs_handleList(w http.ResponseWriter, r *http.Request) {
 		utils.SendErrorResponse(w, err.Error())
 		return
 	}
-	//Commented this line to handle dirname that contains "+" sign
-	//currentDir, _ = url.QueryUnescape(currentDir)
 	sortMode, _ := utils.PostPara(r, "sort")
 	showHidden, _ := utils.PostPara(r, "showHidden")
 
@@ -2543,8 +2553,8 @@ func system_fs_handleList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Pad a slash at the end of currentDir if not exists
-	if currentDir[len(currentDir)-1:] != "/" {
+	// Pad a slash at the end of currentDir if not exists
+	if !strings.HasSuffix(currentDir, "/") {
 		currentDir = currentDir + "/"
 	}
 
@@ -2556,12 +2566,12 @@ func system_fs_handleList(w http.ResponseWriter, r *http.Request) {
 
 	fshAbs := fsh.FileSystemAbstraction
 
-	//Normal file systems
 	realpath, err := fshAbs.VirtualPathToRealPath(subpath, userinfo.Username)
 	if err != nil {
 		utils.SendErrorResponse(w, err.Error())
 		return
 	}
+
 	if !fshAbs.FileExists(realpath) {
 		//Path not exists
 		userRoot, _ := fshAbs.VirtualPathToRealPath("/", userinfo.Username)
@@ -2599,12 +2609,16 @@ func system_fs_handleList(w http.ResponseWriter, r *http.Request) {
 	//Sorting use list
 	realpathList := []string{}
 	fileInfoList := []fs.FileInfo{}
-
 	for _, f := range files {
 		//Check if it is hidden file
 		isHidden, _ := hidden.IsHidden(f.Name(), false)
 		if showHidden != "true" && isHidden {
 			//Skipping hidden files
+			continue
+		}
+
+		//Check if this file contains invalid characters
+		if !utils.FilenameIsWebSafe(f.Name()) {
 			continue
 		}
 
@@ -2666,7 +2680,6 @@ func system_fs_handleList(w http.ResponseWriter, r *http.Request) {
 
 	jsonString, _ := json.Marshal(results)
 	utils.SendJSONResponse(w, string(jsonString))
-
 }
 
 // Handle getting a hash from a given contents in the given path

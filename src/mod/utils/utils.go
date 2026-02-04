@@ -226,3 +226,13 @@ func TemplateApply(templateString string, data map[string]string) string {
 
 	return string(content)
 }
+
+func FilenameIsWebSafe(filename string) bool {
+	unsafeChars := []string{"/", "\\", "?", "%", "*", ":", "|", "\"", "<", ">"}
+	for _, char := range unsafeChars {
+		if strings.Contains(filename, char) {
+			return false
+		}
+	}
+	return true
+}

@@ -244,7 +244,8 @@
                 "message/destIdentical": "檔案來源與目的地相同",
                 "message/decodeFilelistFail": "載案置入失敗：無法讀取檔案列表",
                 "message/uploadFailed": "載案上載失敗：檔案太大或目標儲存裝置已滿",
-                "message/newFilenameIdentical": "重新命名失敗：新舊檔案名稱相同"
+                "message/newFilenameIdentical": "重新命名失敗：新舊檔案名稱相同",
+                "message/illegalCharacters": "名稱包含非法字元（不可使用：/ \\ ? % * : | \" < >）"
             },
             "titles": {
                 "Back": "上一頁",
@@ -528,7 +529,8 @@
                 "message/destIdentical": "檔案來源與目的地相同",
                 "message/decodeFilelistFail": "載案置入失敗：無法讀取檔案列表",
                 "message/uploadFailed": "載案上載失敗：檔案太大或目標儲存裝置已滿",
-                "message/newFilenameIdentical": "重新命名失敗：新舊檔案名稱相同"
+                "message/newFilenameIdentical": "重新命名失敗：新舊檔案名稱相同",
+                "message/illegalCharacters": "名稱包含非法字元（不可使用：/ \\ ? % * : | \" < >）"
             },
             "titles": {
                 "Back": "上一頁",
@@ -811,7 +813,8 @@
                 "message/destIdentical": "文件来源及目标相同",
                 "message/decodeFilelistFail": "文件加载失败：无法读取文件列表",
                 "message/uploadFailed": "文件上传失败：文件太大或目标存储设备已满",
-                "message/newFilenameIdentical": "重命名失败：新旧文件名称相同"
+                "message/newFilenameIdentical": "重命名失败：新旧文件名称相同",
+                "message/illegalCharacters": "名称包含非法字符（不可使用：/ \\ ? % * : | \" < >）"
             },
             "titles": {
                 "Back": "上一页",
@@ -1097,6 +1100,7 @@
                 "message/decodeFilelistFail": "Failed to load folder: could not read the file list.",
                 "message/uploadFailed": "File upload failed: file is too large or the storage device is full.",
                 "message/newFilenameIdentical": "Failed to rename file: new name is identical to the old name.",
+                "message/illegalCharacters": "Name contains illegal characters (cannot use: / \\ ? % * : | \" < >)",
                 "":""
             },
             "titles": {
@@ -1378,6 +1382,7 @@
                 "message/decodeFilelistFail": "フォルダを読み込めませんでした：ファイルリストを読み込めませんでした",
                 "message/uploadFailed": "ファイルのアップロードに失敗しました：ファイルが大きすぎるか、ストレージデバイスがいっぱいです。",
                 "message/newFilenameIdentical": "ファイル名の変更に失敗しました：新しい名前が古い名前と同じです。",
+                "message/illegalCharacters": "名前に使用できない文字が含まれています（使用不可：/ \\ ? % * : | \" < >）",
                 "":""
             },
             "titles": {
@@ -1664,7 +1669,8 @@
                 "message/destIdentical": "소스 및 대상 경로가 동일합니다",
                 "message/decodeFilelistFail": "파일 목록을 읽을 수 없어 파일 로드 실패",
                 "message/uploadFailed": "파일 업로드 실패: 파일이 너무 크거나 대상 저장 장치가 가득 찼습니다",
-                "message/newFilenameIdentical": "이름 변경 실패: 새로운 파일 이름이 기존과 동일합니다"
+                "message/newFilenameIdentical": "이름 변경 실패: 새로운 파일 이름이 기존과 동일합니다",
+                "message/illegalCharacters": "이름에 사용할 수 없는 문자가 포함되어 있습니다 (사용 불가: / \\ ? % * : | \" < >)"
             },
             "titles": {
                 "Back": "뒤로",
