@@ -29,6 +29,9 @@
                 <button id="editUserButton" class="ui small negative disabled right floated button" onclick="removeUser();">
                     Remove
                 </button>
+                <button id="deselectAllBtn" class="ui small right floated basic button" onclick="deselectAll();" style="display: none;">
+                    <i class="remove icon"></i>Deselect All
+                </button>
             </div>
             <div class="ui styled fluid accordion">
                 <div class="title">
@@ -177,45 +180,62 @@
 
 
             //Init User List
+            var validGroups = [];
             initUserList();
             function initUserList(){
                 $("#userTable").html("");
                 $("#editbtn").addClass('disabled');
-                $.ajax({
-                    url: "../../system/users/list",
-                    success: function(data){
-                        for (var i =0; i < data.length; i++){
-                            var username = data[i][0];
-                            var group = data[i][1];
-                            var profilePic = data[i][2];
-                            if (profilePic == ""){
-                                profilePic = "../users/img/noprofileicon.png"
-                            }
-                            var accountStatus = data[i][3];
-                            $("#userTable").append(`<tr>
-                                <td>
-                                    <h4 class="ui image header">
-                                        <img src="${profilePic}" class="ui mini rounded image">
-                                        <div class="content">
-                                        ${username}
+                
+                // First, fetch the valid groups list
+                $.get("../../system/permission/listgroup", function(groupData){
+                    validGroups = groupData;
+                    
+                    // Then load the user list
+                    $.ajax({
+                        url: "../../system/users/list",
+                        success: function(data){
+                            for (var i =0; i < data.length; i++){
+                                var username = data[i][0];
+                                var group = data[i][1];
+                                var profilePic = data[i][2];
+                                if (profilePic == ""){
+                                    profilePic = "../users/img/noprofileicon.png"
+                                }
+                                var accountStatus = data[i][3];
+                                
+                                // Check each group and add invalid label if needed
+                                var groupDisplay = group.map(function(g) {
+                                    if (validGroups.indexOf(g) === -1) {
+                                        return g + ' <span class="ui mini red label">Invalid</span>';
+                                    }
+                                    return g;
+                                }).join("/");
+                                
+                                $("#userTable").append(`<tr>
+                                    <td>
+                                        <h4 class="ui image header">
+                                            <img src="${profilePic}" class="ui mini rounded image">
+                                            <div class="content">
+                                            ${username}
                                         </div>
                                     </h4>
                                 </td>
                                 <td>
-                                    ${group.join("/")}
+                                    ${groupDisplay}
                                 </td>
                                 <td>
                                     <div class="ui checkbox">
-                                        <input type="radio" name="selectUser" value="${username}" self="${data[i][3]}" onchange="enableEdit(this);">
+                                        <input type="checkbox" class="selectUser" value="${username}" self="${data[i][3]}" onchange="handleUserSelection();">
                                         <label></label>
                                     </div>
                                 </td>
                             </tr>`);
+                            }
+                        },
+                        error: function(data){
+                            $("#userTable").html("<p> Failed to load user database. </p>");
                         }
-                    },
-                    error: function(data){
-                        $("#userTable").html("<p> Failed to load user database. </p>");
-                    }
+                    });
                 });
             }
 
@@ -333,7 +353,7 @@
             }
 
             function showEditUI(){
-                var username = $("input[name='selectUser']:checked").val();
+                var username = $(".selectUser:checked").first().val();
                 ao_module_newfw({
                     url:"SystemAO/users/editUser.html#" + encodeURIComponent(username),
                     width: 530,
@@ -346,11 +366,25 @@
             }
 
             function removeUser(){
-                var username = $("input[name='selectUser']:checked").val();
-                if (confirm("Remove " + username + " from the system PERMANENTLY?")){
+                var selectedUsers = $(".selectUser:checked");
+                var usernames = [];
+                
+                selectedUsers.each(function(){
+                    usernames.push($(this).val());
+                });
+                
+                if (usernames.length === 0) {
+                    return;
+                }
+                
+                var confirmMessage = usernames.length === 1 
+                    ? "Remove " + usernames[0] + " from the system PERMANENTLY?"
+                    : "Remove " + usernames.length + " users from the system PERMANENTLY?";
+                    
+                if (confirm(confirmMessage)){
                     $.ajax({
                         url: "../../system/users/removeUser",
-                        data: {username: username},
+                        data: {usernames: JSON.stringify(usernames)},
                         method: "POST",
                         success: function(data){
                             if (data.error !== undefined){
@@ -359,6 +393,9 @@
                                 //Reload the list
                                 initUserList();
                             }
+                        },
+                        error: function(xhr, status, error){
+                            alert("Failed to remove user(s): " + error);
                         }
                     });
                 }
@@ -370,15 +407,50 @@
                 }
             }
 
-            function enableEdit(object){
-                if ($(object).attr("self") != "true"){
-                    $("#editUserButton").removeClass("disabled");
-                    $("#editbtn").removeClass("disabled");
-                }else{
+            function handleUserSelection(){
+                var selectedUsers = $(".selectUser:checked");
+                var selectedCount = selectedUsers.length;
+                
+                // Check if the current user is in the selection
+                var currentUserSelected = false;
+                selectedUsers.each(function(){
+                    if ($(this).attr("self") === "true") {
+                        currentUserSelected = true;
+                        return false; // break the loop
+                    }
+                });
+                
+                if (selectedCount === 0) {
+                    // No users selected
                     $("#editUserButton").addClass("disabled");
+                    $("#editbtn").addClass("disabled");
+                    $("#deselectAllBtn").hide();
+                } else if (selectedCount === 1) {
+                    // Single user selected
+                    var isSelf = selectedUsers.first().attr("self") === "true";
+                    if (isSelf) {
+                        $("#editUserButton").addClass("disabled");
+                    } else {
+                        $("#editUserButton").removeClass("disabled");
+                    }
                     $("#editbtn").removeClass("disabled");
+                    $("#deselectAllBtn").hide();
+                } else {
+                    // Multiple users selected
+                    if (currentUserSelected) {
+                        // Current user is in the selection, disable delete button
+                        $("#editUserButton").addClass("disabled");
+                    } else {
+                        $("#editUserButton").removeClass("disabled");
+                    }
+                    $("#editbtn").addClass("disabled"); // Disable edit for multiple selection
+                    $("#deselectAllBtn").show();
                 }
-               
+            }
+            
+            function deselectAll(){
+                $(".selectUser:checked").prop('checked', false);
+                handleUserSelection();
             }
         </script>
     </body>
