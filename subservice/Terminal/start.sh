@@ -31,4 +31,4 @@ if [ -z "$PORT" ]; then
 fi
 
 echo "Starting Terminal on port $PORT"
-exec ttyd -W -p "$PORT" /bin/bash -c 'bash; echo; echo "[Session ended. Close this window or press Enter to start a new session.]" ; read'
+exec ttyd -W -t disableReconnect=true -p "$PORT" /bin/bash
