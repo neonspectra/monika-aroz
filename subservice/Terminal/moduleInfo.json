@@ -1,0 +1,15 @@
+{
+    "Name": "Terminal",
+    "Desc": "Web-based terminal emulator",
+    "Group": "System",
+    "IconPath": "Terminal/img/icon.png",
+    "Version": "1.0",
+    "StartDir": "Terminal/",
+    "SupportFW": true,
+    "LaunchFWDir": "Terminal/",
+    "SupportEmb": false,
+    "LaunchEmb": "Terminal/",
+    "InitFWSize": [800, 500],
+    "InitEmbSize": [800, 500],
+    "SupportedExt": []
+}
