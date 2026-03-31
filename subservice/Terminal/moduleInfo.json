@@ -2,7 +2,7 @@
     "Name": "Terminal",
     "Desc": "Web-based terminal emulator",
     "Group": "System",
-    "IconPath": "Terminal/img/icon.png",
+    "IconPath": "img/subservice/terminal.png",
     "Version": "1.0",
     "StartDir": "Terminal/",
     "SupportFW": true,
