@@ -2,8 +2,8 @@
 
 Code samples for ArozOS webapp and AGI development.
 
-For the full developer guide, see [docs/apps-and-subservices.md](../docs/apps-and-subservices.md).
+For the full developer guide, see [docs/developers/apps-and-subservices.md](../docs/developers/apps-and-subservices.md).
 
-For AGI API reference, see [docs/agi-reference.md](../docs/agi-reference.md).
+For AGI API reference, see [docs/developers/agi-reference.md](../docs/developers/agi-reference.md).
 
-For frontend API (ao_module.js), see [docs/frontend-api.md](../docs/frontend-api.md).
+For frontend API (ao_module.js), see [docs/developers/frontend-api.md](../docs/developers/frontend-api.md).

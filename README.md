@@ -23,12 +23,17 @@ UPSTREAM-MERGE-GUIDE.md         Structural divergences from upstream + merge str
 
 docs/
 ├── quickstart.md               Build, run, first user, Docker
-├── apps-and-subservices.md     Webapp + subservice development guide
-├── agi-reference.md            Complete AGI server-side scripting API
-├── frontend-api.md             ao_module.js: float windows, files, utilities
-├── configuration.md            Startup flags, storage pools, vendor customization
-├── deployment.md               Install guides (Linux, Windows, Docker, systemd)
-└── architecture.md             Request routing, filesystem layers, AGI model, internals
+├── architecture.md             Request routing, filesystem layers, AGI model, internals
+├── users/
+│   ├── features.md             Complete feature and app inventory
+│   └── storage-and-sharing.md  Storage pools, file sharing, network file servers
+├── admins/
+│   ├── configuration.md        Startup flags, storage pools, vendor customization
+│   └── deployment.md           Install guides (Linux, Windows, Docker, systemd)
+└── developers/
+    ├── apps-and-subservices.md  Webapp + subservice development guide
+    ├── agi-reference.md        Complete AGI server-side scripting API
+    └── frontend-api.md         ao_module.js: float windows, files, utilities
 
 src/
 ├── web/                        Static webapps (HTML/JS/CSS + init.agi)
@@ -52,11 +57,13 @@ Dockerfile                      Multi-stage Docker build
 | Document | Audience | Covers |
 |----------|----------|--------|
 | [Quickstart](docs/quickstart.md) | Everyone | Build, run, Docker, dev workflow |
-| [Apps & Subservices](docs/apps-and-subservices.md) | App developers | Building webapps, subservices, and hybrid apps |
-| [AGI Reference](docs/agi-reference.md) | App developers | Server-side scripting: filelib, http, websocket, imagelib, etc. |
-| [Frontend API](docs/frontend-api.md) | App developers | ao_module.js: windows, files, uploads, utilities |
-| [Configuration](docs/configuration.md) | Admins/deployers | Startup flags, storage pools, vendor customization |
-| [Deployment](docs/deployment.md) | Admins/deployers | Linux, Windows, Docker, systemd |
+| [Features](docs/users/features.md) | Everyone | Complete feature and app inventory |
+| [Storage & Sharing](docs/users/storage-and-sharing.md) | Users | Storage pools, file sharing, network file servers |
+| [Apps & Subservices](docs/developers/apps-and-subservices.md) | App developers | Building webapps, subservices, and hybrid apps |
+| [AGI Reference](docs/developers/agi-reference.md) | App developers | Server-side scripting: filelib, http, websocket, imagelib, etc. |
+| [Frontend API](docs/developers/frontend-api.md) | App developers | ao_module.js: windows, files, uploads, utilities |
+| [Configuration](docs/admins/configuration.md) | Admins/deployers | Startup flags, storage pools, vendor customization |
+| [Deployment](docs/admins/deployment.md) | Admins/deployers | Linux, Windows, Docker, systemd |
 | [Architecture](docs/architecture.md) | Contributors | Request routing, filesystem layers, AGI execution model |
 | [AGENTS.md](AGENTS.md) | AI agents | Testing strategies, process management, gotchas |
 | [Upstream Merge Guide](UPSTREAM-MERGE-GUIDE.md) | Maintainers | Structural divergences, conflict resolution |

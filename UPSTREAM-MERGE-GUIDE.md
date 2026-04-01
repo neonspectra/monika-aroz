@@ -26,9 +26,9 @@ git commit
 | Default branch `master` → `main` | Branch rename | Convention | None (branch name only) | N/A |
 | `docs/` marketing site deleted | Entire directory removed, replaced with real developer documentation | The `docs/` folder was a GitHub Pages marketing site, not documentation. We replaced it with structured dev docs (quickstart, architecture, API reference, etc.) | **High if upstream touches docs/** | Keep ours. Upstream's `docs/` is a marketing site we don't use. |
 | `src/subservice/*` un-gitignored | `.gitignore` change | We ship subservices as part of the repo for declarative deployment, rather than treating them as runtime-only additions | Low — one line in .gitignore | Keep our .gitignore |
-| `src/agi-doc.md` moved to `docs/agi-reference.md` | File moved | Consolidated into our docs structure | **High if upstream updates agi-doc.md** | Merge upstream's content changes into `docs/agi-reference.md`. The old file is replaced with a pointer. |
-| `src/README.md` replaced with pointer | Content moved to `docs/architecture.md` and `docs/apps-and-subservices.md` | Consolidated | Medium if upstream updates | Merge content into our docs files |
-| `examples/README.md` replaced with pointer | Content moved to `docs/apps-and-subservices.md` and `docs/frontend-api.md` | Consolidated | Medium if upstream updates | Merge content into our docs files |
+| `src/agi-doc.md` moved to `docs/developers/agi-reference.md` | File moved | Consolidated into our docs structure | **High if upstream updates agi-doc.md** | Merge upstream's content changes into `docs/agi-reference.md`. The old file is replaced with a pointer. |
+| `src/README.md` replaced with pointer | Content moved to `docs/architecture.md` and `docs/developers/apps-and-subservices.md` | Consolidated | Medium if upstream updates | Merge content into our docs files |
+| `examples/README.md` replaced with pointer | Content moved to `docs/developers/apps-and-subservices.md` and `docs/developers/frontend-api.md` | Consolidated | Medium if upstream updates | Merge content into our docs files |
 | `README.md` slimmed down | Heavy content moved to docs/ | Upstream README is overloaded | Medium | Manual merge — keep our structure, integrate any new upstream content into the appropriate docs/ file |
 | `README-DE.md` deleted | Stale German translation | Diverged from English, unmaintained | Low | Delete again if upstream re-adds |
 | `Dockerfile` added | New file | Docker build support | None — new file | N/A |
@@ -44,10 +44,10 @@ When upstream updates documentation content, here's where it maps in our structu
 
 | Upstream file | Our location |
 |---------------|-------------|
-| `src/agi-doc.md` | `docs/agi-reference.md` |
-| `src/README.md` (dev notes) | `docs/architecture.md` + `docs/apps-and-subservices.md` |
-| `examples/README.md` | `docs/apps-and-subservices.md` + `docs/frontend-api.md` |
-| `README.md` (startup flags) | `docs/configuration.md` |
-| `README.md` (install guides) | `docs/deployment.md` |
-| `README.md` (storage/file servers) | `docs/configuration.md` + `docs/deployment.md` |
+| `src/agi-doc.md` | `docs/developers/agi-reference.md` |
+| `src/README.md` (dev notes) | `docs/architecture.md` + `docs/developers/apps-and-subservices.md` |
+| `examples/README.md` | `docs/developers/apps-and-subservices.md` + `docs/developers/frontend-api.md` |
+| `README.md` (startup flags) | `docs/admins/configuration.md` |
+| `README.md` (install guides) | `docs/admins/deployment.md` |
+| `README.md` (storage/file servers) | `docs/admins/configuration.md` + `docs/admins/deployment.md` |
 | `docs/*` (marketing site) | Deleted — do not restore |

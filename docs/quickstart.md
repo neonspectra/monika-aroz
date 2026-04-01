@@ -60,9 +60,11 @@ The first visit to a fresh ArozOS instance presents a user creation form. After 
 
 ## What's Next
 
-- [Apps and Subservices](apps-and-subservices.md) — build your own ArozOS applications
-- [AGI Reference](agi-reference.md) — complete server-side scripting API
-- [Frontend API](frontend-api.md) — ao_module.js float window and file operations
-- [Configuration](configuration.md) — startup flags, storage pools, vendor customization
-- [Deployment](deployment.md) — platform-specific install guides, systemd, Docker
+- [Features](users/features.md) — complete feature and app inventory
+- [Storage & Sharing](users/storage-and-sharing.md) — storage pools, file sharing, network file servers
+- [Apps and Subservices](developers/apps-and-subservices.md) — build your own ArozOS applications
+- [AGI Reference](developers/agi-reference.md) — complete server-side scripting API
+- [Frontend API](developers/frontend-api.md) — ao_module.js float window and file operations
+- [Configuration](admins/configuration.md) — startup flags, storage pools, vendor customization
+- [Deployment](admins/deployment.md) — platform-specific install guides, systemd, Docker
 - [Architecture](architecture.md) — request routing, filesystem layers, internals

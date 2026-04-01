@@ -197,7 +197,7 @@ AGI (ArozOS Gateway Interface) is a server-side JavaScript engine powered by [Ot
 
 Scripts load libraries with `requirelib("name")`. Each library adds functions to the VM's global scope under a namespace (e.g. `filelib.readFile()`). Libraries are only available after a successful `requirelib()` call.
 
-See [AGI Reference](agi-reference.md) for the complete API.
+See [AGI Reference](developers/agi-reference.md) for the complete API.
 
 ### Detached Execution
 

@@ -1,6 +1,6 @@
 # AGENTS.md — AI Agent Development Guide
 
-This file contains instructions specific to AI coding agents. For general development, see [docs/quickstart.md](docs/quickstart.md). For app development, see [docs/apps-and-subservices.md](docs/apps-and-subservices.md).
+This file contains instructions specific to AI coding agents. For general development, see [docs/quickstart.md](docs/quickstart.md). For app development, see [docs/developers/apps-and-subservices.md](docs/developers/apps-and-subservices.md).
 
 ## Build and Test Cycle
 
