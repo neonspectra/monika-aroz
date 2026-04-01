@@ -1,6 +1,6 @@
 ![Image](img/banner.png?raw=true)
 
-# monika-aroz
+# aroz
 
 Fork of [ArozOS](https://github.com/tobychui/arozos) — a web-based desktop operating system written in Go.
 
