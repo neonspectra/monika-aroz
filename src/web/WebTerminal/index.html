@@ -149,6 +149,11 @@
     if (window.parent !== window && window.parent.document.querySelector('.taskBar')) {
       document.getElementById('toolbar').style.paddingLeft = '54px';
       document.getElementById('toolbar-ext').style.paddingLeft = '54px';
+      // Reset scroll to show leftmost buttons first
+      setTimeout(() => {
+        document.getElementById('toolbar').scrollLeft = 0;
+        document.getElementById('toolbar-ext').scrollLeft = 0;
+      }, 0);
     }
   } catch(e) { /* cross-origin, ignore */ }
 
