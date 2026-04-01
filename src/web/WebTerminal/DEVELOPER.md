@@ -1,5 +1,43 @@
 # Terminal App — Developer Reference
 
+## Local Development Setup
+
+Prerequisites: Go (for building ArozOS), ttyd (`apt install ttyd`).
+
+From the repo root:
+
+```bash
+# Build the binary
+cd src && go build -o ../arozos && cd ..
+
+# Create symlinks so ArozOS finds its assets
+ln -sf src/web web
+ln -sf src/system system
+ln -sf src/subservice subservice
+
+# Run
+./arozos -port 8090
+```
+
+ArozOS will scan `./subservice/*/` on startup, find `Terminal/`, read its `moduleInfo.json`, and launch `start.sh` with an auto-assigned port. The reverse proxy from `/Terminal/*` to ttyd is set up automatically.
+
+Changes to `start.sh` or `moduleInfo.json` require restarting ArozOS. Changes to `src/web/WebTerminal/index.html` take effect on page reload (it's a static file).
+
+To kill cleanly, stop ArozOS and then kill any orphaned ttyd:
+
+```bash
+pkill -f arozos; pkill -f "ttyd.*12810"
+```
+
+## Docker
+
+The Dockerfile includes ttyd and copies `src/subservice/` into the image. No symlinks needed — the Dockerfile handles the layout:
+
+```bash
+docker build -t arozos .
+docker run -p 8090:8080 arozos
+```
+
 ## Overview
 
 The Terminal app provides a web-based shell accessible through the ArozOS desktop and mobile UI. It combines two components: a **ttyd subservice** that runs the actual terminal backend, and a **WebTerminal webapp** that wraps it with a mobile-friendly touch toolbar.
