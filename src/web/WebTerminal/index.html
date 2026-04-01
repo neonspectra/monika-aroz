@@ -29,7 +29,6 @@
     border-top: 1px solid #444;
     align-items: center;
     padding: 0 4px;
-    padding-left: 8px;
     gap: 3px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -46,7 +45,6 @@
     border-top: 1px solid #333;
     align-items: center;
     padding: 0 4px;
-    padding-left: 8px;
     gap: 3px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -144,6 +142,15 @@
   if (!isTouch) return;
 
   document.body.classList.add('has-toolbar');
+
+  // Detect if we're inside ArozOS mobile UI and account for sidebar + toggle button
+  // Sidebar is 30px, toggle arrow sticks out 20px further = 50px total
+  try {
+    if (window.parent !== window && window.parent.document.querySelector('.taskBar')) {
+      document.getElementById('toolbar').style.paddingLeft = '54px';
+      document.getElementById('toolbar-ext').style.paddingLeft = '54px';
+    }
+  } catch(e) { /* cross-origin, ignore */ }
 
   const iframe = document.getElementById('terminal-frame');
   const btnMore = document.getElementById('btn-more');
