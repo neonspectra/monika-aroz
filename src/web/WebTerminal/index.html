@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Terminal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: #1a1a1a; }
+
+  #terminal-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  body.has-toolbar #terminal-frame {
+    height: calc(100% - 40px);
+  }
+  body.has-toolbar.toolbar-expanded #terminal-frame {
+    height: calc(100% - 80px);
+  }
+
+  /* Primary toolbar */
+  #toolbar {
+    display: none;
+    height: 40px;
+    background: #2d2d2d;
+    border-top: 1px solid #444;
+    align-items: center;
+    padding: 0 4px;
+    gap: 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  body.has-toolbar #toolbar { display: flex; }
+
+  /* Extended toolbar */
+  #toolbar-ext {
+    display: none;
+    height: 40px;
+    background: #252525;
+    border-top: 1px solid #333;
+    align-items: center;
+    padding: 0 4px;
+    gap: 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  body.has-toolbar.toolbar-expanded #toolbar-ext { display: flex; }
+
+  .tb-btn {
+    flex-shrink: 0;
+    height: 32px;
+    min-width: 42px;
+    padding: 0 8px;
+    background: #3a3a3a;
+    color: #e0e0e0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .tb-btn:active {
+    background: #555;
+  }
+  .tb-btn.accent {
+    background: #4a3a2a;
+    border-color: #8a6a4a;
+    color: #ffcc80;
+  }
+  .tb-btn.danger {
+    background: #4a2a2a;
+    border-color: #8a4a4a;
+    color: #ff8a80;
+  }
+  .tb-btn.toggle {
+    background: #2a3a4a;
+    border-color: #4a6a8a;
+    color: #80ccff;
+  }
+  .tb-btn.toggle.active {
+    background: #4a6a8a;
+  }
+
+  .tb-sep {
+    flex-shrink: 0;
+    width: 1px;
+    height: 24px;
+    background: #444;
+    margin: 0 2px;
+  }
+</style>
+</head>
+<body>
+
+<iframe id="terminal-frame" src="/Terminal/"></iframe>
+
+<!-- Primary toolbar: always-visible essentials -->
+<div id="toolbar">
+  <button class="tb-btn" data-key="Tab" title="Tab">Tab</button>
+  <button class="tb-btn danger" data-key="Ctrl-C" title="Ctrl-C">^C</button>
+  <button class="tb-btn" data-key="Esc" title="Escape">Esc</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" data-key="Up" title="Up">↑</button>
+  <button class="tb-btn" data-key="Down" title="Down">↓</button>
+  <button class="tb-btn" data-key="Left" title="Left">←</button>
+  <button class="tb-btn" data-key="Right" title="Right">→</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn toggle" id="btn-more" title="More keys">···</button>
+</div>
+
+<!-- Extended toolbar: less common keys -->
+<div id="toolbar-ext">
+  <button class="tb-btn" data-key="Ctrl-R" title="Reverse search">^R</button>
+  <button class="tb-btn" data-key="Ctrl-D" title="EOF/Exit">^D</button>
+  <button class="tb-btn" data-key="Ctrl-Z" title="Suspend">^Z</button>
+  <button class="tb-btn" data-key="Ctrl-L" title="Clear">^L</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" data-key="Home" title="Home">Home</button>
+  <button class="tb-btn" data-key="End" title="End">End</button>
+  <button class="tb-btn" data-key="PgUp" title="Page Up">PgUp</button>
+  <button class="tb-btn" data-key="PgDn" title="Page Down">PgDn</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn accent" data-key="Shift-Enter" title="Shift+Enter (pi newline)">⇧↵</button>
+  <button class="tb-btn accent" data-key="Detach" title="tmux detach (Ctrl-B d)">Detach</button>
+  <button class="tb-btn accent" data-key="TmuxScroll" title="tmux scroll (Ctrl-B [)">Scroll</button>
+</div>
+
+<script>
+(function() {
+  // Only show toolbar on touch devices
+  const isTouch = window.matchMedia("(any-pointer: coarse)").matches;
+  if (!isTouch) return;
+
+  document.body.classList.add('has-toolbar');
+
+  const iframe = document.getElementById('terminal-frame');
+  const btnMore = document.getElementById('btn-more');
+
+  // Toggle extended toolbar
+  btnMore.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.body.classList.toggle('toolbar-expanded');
+    btnMore.classList.toggle('active');
+    // Trigger resize so xterm recalculates
+    setTimeout(() => {
+      try { iframe.contentWindow.dispatchEvent(new Event('resize')); } catch(e) {}
+    }, 50);
+  });
+
+  // Key sequence map
+  const keyMap = {
+    'Tab':          '\x09',
+    'Ctrl-C':       '\x03',
+    'Esc':          '\x1b',
+    'Up':           '\x1b[A',
+    'Down':         '\x1b[B',
+    'Left':         '\x1b[D',
+    'Right':        '\x1b[C',
+    'Ctrl-R':       '\x12',
+    'Ctrl-D':       '\x04',
+    'Ctrl-Z':       '\x1a',
+    'Ctrl-L':       '\x0c',
+    'Home':         '\x1b[H',
+    'End':          '\x1b[F',
+    'PgUp':         '\x1b[5~',
+    'PgDn':         '\x1b[6~',
+    'Shift-Enter':  '\x1b[13;2u',  // CSI u encoding for Shift+Enter
+    'Detach':       '\x02d',        // Ctrl-B then d
+    'TmuxScroll':   '\x02[',        // Ctrl-B then [
+  };
+
+  // Send keystroke to terminal
+  function sendKey(key) {
+    const seq = keyMap[key];
+    if (!seq) return;
+    try {
+      const term = iframe.contentWindow.term;
+      if (term && term.input) {
+        // ttyd uses term.input for sending data to the server
+        term.input(seq);
+      } else if (term && term._core && term._core._coreService) {
+        // Fallback: trigger via xterm internals
+        term._core._coreService.triggerDataEvent(seq);
+      }
+    } catch(e) {
+      console.warn('Failed to send key:', key, e);
+    }
+  }
+
+  // Attach click handlers to all toolbar buttons
+  document.querySelectorAll('.tb-btn[data-key]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      sendKey(btn.dataset.key);
+      // Refocus terminal
+      try { iframe.contentWindow.term.focus(); } catch(e) {}
+    });
+
+    // Prevent button from stealing focus from terminal
+    btn.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    btn.addEventListener('touchstart', function(e) { e.preventDefault(); }, {passive: false});
+  });
+
+  // Handle touchend for more reliable mobile taps
+  document.querySelectorAll('.tb-btn[data-key]').forEach(function(btn) {
+    btn.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      sendKey(btn.dataset.key);
+      try { iframe.contentWindow.term.focus(); } catch(e) {}
+    });
+  });
+})();
+</script>
+</body>
+</html>
