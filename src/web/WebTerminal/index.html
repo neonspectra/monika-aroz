@@ -230,6 +230,11 @@
 
     // Prevent button from stealing focus from terminal
     btn.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    btn.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      sendKey(btn.dataset.key);
+      try { iframe.contentWindow.term.focus(); } catch(ex) {}
+    });
   });
 
 })();
