@@ -219,6 +219,23 @@
     }
   }
 
+  // Key repeat state
+  let repeatTimer = null;
+  let repeatInterval = null;
+
+  function startRepeat(key) {
+    stopRepeat();
+    // Initial delay before repeat starts (like a real keyboard)
+    repeatTimer = setTimeout(() => {
+      repeatInterval = setInterval(() => sendKey(key), 80);
+    }, 400);
+  }
+
+  function stopRepeat() {
+    if (repeatTimer) { clearTimeout(repeatTimer); repeatTimer = null; }
+    if (repeatInterval) { clearInterval(repeatInterval); repeatInterval = null; }
+  }
+
   // Attach click handlers to all toolbar buttons
   document.querySelectorAll('.tb-btn[data-key]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
@@ -230,10 +247,17 @@
 
     // Prevent button from stealing focus from terminal
     btn.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    btn.addEventListener('touchstart', function(e) {
+      startRepeat(btn.dataset.key);
+    }, {passive: true});
     btn.addEventListener('touchend', function(e) {
       e.preventDefault();
+      stopRepeat();
       sendKey(btn.dataset.key);
       try { iframe.contentWindow.term.focus(); } catch(ex) {}
+    });
+    btn.addEventListener('touchcancel', function(e) {
+      stopRepeat();
     });
   });
 
