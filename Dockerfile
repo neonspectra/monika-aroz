@@ -20,7 +20,7 @@ WORKDIR /arozos
 COPY --from=builder /build/arozos ./arozos
 COPY src/web ./web/
 COPY src/system ./system/
-COPY subservice ./subservice/
+COPY src/subservice ./subservice/
 
 EXPOSE 8080
 

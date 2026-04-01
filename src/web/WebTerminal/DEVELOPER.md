@@ -42,7 +42,7 @@ On desktop, the user gets raw ttyd (xterm.js in the browser, WebSocket to a pty)
 ## File Layout
 
 ```
-subservice/Terminal/
+src/subservice/Terminal/
 ├── .startscript          # Tells ArozOS to use start.sh instead of a binary
 ├── start.sh              # Parses ArozOS args, launches ttyd
 ├── moduleInfo.json       # Module metadata (name, icon, launch URLs)

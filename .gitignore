@@ -24,7 +24,7 @@ src/localhost.crt
 src/localhost.key
 src/system/dev.uuid
 src/system/storage.json
-src/subservice/*
+# src/subservice/* is tracked in our fork (we ship subservices declaratively)
 src/*.go_disabled
 src/system/ao.db
 
@@ -49,3 +49,4 @@ src/system/smtp_conf.json
 # Symlinks and binary created for local dev
 /web
 /system
+/subservice
