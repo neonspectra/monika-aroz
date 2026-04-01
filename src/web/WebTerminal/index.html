@@ -148,8 +148,21 @@
   try {
     if (window.parent !== window && window.parent.document.querySelector('.taskBar')) {
       // Offset toolbars to clear sidebar + toggle arrow
-      document.getElementById('toolbar').style.marginLeft = '50px';
-      document.getElementById('toolbar-ext').style.marginLeft = '50px';
+      // Use a sticky pseudo-spacer so it doesn't scroll with content
+      const style = document.createElement('style');
+      style.textContent = `
+        #toolbar::before, #toolbar-ext::before {
+          content: '';
+          flex-shrink: 0;
+          width: 50px;
+          min-width: 50px;
+          position: sticky;
+          left: 0;
+          background: inherit;
+          z-index: 1;
+        }
+      `;
+      document.head.appendChild(style);
     }
   } catch(e) { /* cross-origin, ignore */ }
 
