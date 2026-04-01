@@ -135,10 +135,9 @@
 
 <script>
 (function() {
-  // Show toolbar on touch devices, or when viewport is narrow (mobile)
+  // Show toolbar on touch devices
   const isTouch = window.matchMedia("(any-pointer: coarse)").matches;
-  const isNarrow = window.innerWidth < 768;
-  if (!isTouch && !isNarrow) return;
+  if (!isTouch) return;
 
   document.body.classList.add('has-toolbar');
 
@@ -183,13 +182,20 @@
     const seq = keyMap[key];
     if (!seq) return;
     try {
-      const term = iframe.contentWindow.term;
-      if (term && term.input) {
-        // ttyd uses term.input for sending data to the server
-        term.input(seq);
-      } else if (term && term._core && term._core._coreService) {
-        // Fallback: trigger via xterm internals
-        term._core._coreService.triggerDataEvent(seq);
+      const win = iframe.contentWindow;
+      const term = win.term;
+      if (!term) { console.warn('term not found'); return; }
+
+      // xterm's coreService.triggerDataEvent fires onData,
+      // which ttyd's handler picks up and sends via WebSocket
+      if (term._core && term._core.coreService) {
+        term._core.coreService.triggerDataEvent(seq, true);
+      } else if (term._core && term._core._coreService) {
+        term._core._coreService.triggerDataEvent(seq, true);
+      } else {
+        // Last resort: find ttyd's sendData on the global scope
+        console.warn('Could not find coreService, trying paste fallback');
+        term.paste(seq);
       }
     } catch(e) {
       console.warn('Failed to send key:', key, e);
