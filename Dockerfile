@@ -11,6 +11,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ffmpeg \
+        ttyd \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -19,6 +20,7 @@ WORKDIR /arozos
 COPY --from=builder /build/arozos ./arozos
 COPY src/web ./web/
 COPY src/system ./system/
+COPY src/subservice ./subservice/
 
 EXPOSE 8080
 

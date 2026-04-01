@@ -2,15 +2,29 @@
 */Thumbs.db
 */._*
 
+# ArozOS runtime data (created when running from repo root)
+/files/
+/tmp/
+/system/ao.db
+/system/ao.db.lock
+/system/logs/
+/system/auth/
+/system/dev.uuid
+/system/storage.json
+/system/bridge.json
+/system/cron.json
+/system/smtp_conf.json
+
 # Files that should not go into the main branch
 src/arozos.exe
 src/arozos_*
 src/arozos
+/arozos
 src/localhost.crt
 src/localhost.key
 src/system/dev.uuid
 src/system/storage.json
-src/subservice/*
+# src/subservice/* is tracked in our fork (we ship subservices declaratively)
 src/*.go_disabled
 src/system/ao.db
 
@@ -31,3 +45,8 @@ src/system/bridge.json
 src/system/cron.json
 src/system/smtp_conf.json
 /src/web/FFmpeg Factory
+
+# Symlinks and binary created for local dev
+/web
+/system
+/subservice

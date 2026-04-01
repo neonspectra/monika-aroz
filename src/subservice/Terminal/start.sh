@@ -1,0 +1,33 @@
+#!/bin/bash
+# ArozOS Terminal Subservice
+# Launches ttyd as a reverse-proxied subservice
+#
+# Icon: Official Bash logo from https://github.com/odb/official-bash-logo (MIT License)
+
+PORT=""
+
+# Parse ArozOS subservice arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -port)
+            # ArozOS passes port as ":XXXX" or "XXXX" depending on .intport flag
+            PORT="${2#:}"
+            shift 2
+            ;;
+        -rpt)
+            # Reverse proxy target — not needed for ttyd
+            shift 2
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+if [ -z "$PORT" ]; then
+    echo "ERROR: No port specified"
+    exit 1
+fi
+
+echo "Starting Terminal on port $PORT"
+exec ttyd -W -t disableReconnect=true -w ~ -p "$PORT" /bin/bash
