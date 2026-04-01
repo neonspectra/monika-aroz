@@ -147,13 +147,9 @@
   // Sidebar is 30px, toggle arrow sticks out 20px further = 50px total
   try {
     if (window.parent !== window && window.parent.document.querySelector('.taskBar')) {
-      document.getElementById('toolbar').style.paddingLeft = '54px';
-      document.getElementById('toolbar-ext').style.paddingLeft = '54px';
-      // Reset scroll to show leftmost buttons first
-      setTimeout(() => {
-        document.getElementById('toolbar').scrollLeft = 0;
-        document.getElementById('toolbar-ext').scrollLeft = 0;
-      }, 0);
+      // Offset toolbars to clear sidebar + toggle arrow
+      document.getElementById('toolbar').style.marginLeft = '50px';
+      document.getElementById('toolbar-ext').style.marginLeft = '50px';
     }
   } catch(e) { /* cross-origin, ignore */ }
 
