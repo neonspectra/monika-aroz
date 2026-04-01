@@ -147,12 +147,13 @@
   // Sidebar is 30px, toggle arrow sticks out 20px further = 50px total
   try {
     if (window.parent !== window && window.parent.document.querySelector('.taskBar')) {
-      // Offset toolbars to clear sidebar + toggle arrow
-      // margin-left shifts the box, calc width prevents overflow to the right
+      // Offset toolbars to clear the sidebar toggle arrow
+      // The iframe is inside #mainFrame (already 30px from left),
+      // but the toggle arrow sticks out 20px into our space
       ['toolbar', 'toolbar-ext'].forEach(id => {
         const bar = document.getElementById(id);
-        bar.style.marginLeft = '50px';
-        bar.style.width = 'calc(100% - 50px)';
+        bar.style.marginLeft = '24px';
+        bar.style.width = 'calc(100% - 24px)';
       });
     }
   } catch(e) { /* cross-origin, ignore */ }
