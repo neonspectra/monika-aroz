@@ -31,4 +31,4 @@ if [ -z "$PORT" ]; then
 fi
 
 echo "Starting Terminal on port $PORT"
-exec ttyd -W -t disableReconnect=true -p "$PORT" /bin/bash
+exec ttyd -W -t disableReconnect=true -w ~ -p "$PORT" /bin/bash
