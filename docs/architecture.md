@@ -10,24 +10,26 @@ block-beta
 
   block:client:1
     columns 1
+    A["Client"]
     Browser
   end
 
   block:arozos:1
     columns 1
-    A["ArozOS"]
-    B["mrouter"]
-    C["Auth"]
-    D["AGI Gateway"]
-    E["Subservice Proxy"]
-    F["Static File Server"]
+    B["ArozOS Core"]
+    C["mrouter"]
+    D["Auth"]
+    E["AGI Gateway"]
+    F["Subservice Proxy"]
+    G["Static File Server"]
   end
 
   block:backends:1
     columns 1
-    G["Webapps (web/)"]
-    H["Subservices"]
-    I["Filesystem"]
+    H["Backends"]
+    I["Webapps (web/)"]
+    J["Subservices"]
+    K["Filesystem"]
   end
 ```
 
