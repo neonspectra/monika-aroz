@@ -8,11 +8,13 @@ This document covers ArozOS internals: how requests are routed, how the filesyst
 block-beta
   columns 3
 
-  block:client["Client"]:1
+  block:client:1
+    columns 1
     Browser
   end
 
-  block:arozos["ArozOS Core"]:1
+  block:arozos:1
+    columns 1
     mrouter
     Auth
     AGI["AGI Gateway"]
@@ -20,12 +22,15 @@ block-beta
     StaticFS["Static File Server"]
   end
 
-  block:backends["Backends"]:1
+  block:backends:1
+    columns 1
     Webapps["Webapps (web/)"]
     Subservices
     Filesystem
   end
 ```
+
+*Columns: **Client** | **ArozOS Core** | **Backends***
 
 Requests arrive from the browser, pass through ArozOS's router and auth layer, then are dispatched to one of three backend types: static webapps, reverse-proxied subservices, or the filesystem (via AGI). The sections below detail each path.
 
