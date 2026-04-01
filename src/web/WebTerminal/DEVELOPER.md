@@ -89,6 +89,10 @@ Key injection uses `term._core.coreService.triggerDataEvent(sequence, true)`, wh
 
 ## Gotchas and Lessons Learned
 
+### This is a webshell
+
+The Terminal app is, by design, a webshell — it gives authenticated users full shell access to the host through a browser. This is the intended functionality for a web desktop environment like ArozOS, but it means the security model depends entirely on ArozOS's authentication layer. If ArozOS auth is bypassed, the attacker has shell access. Keep this in mind when deploying: use HTTPS, strong credentials, and don't expose the instance to the public internet without additional access controls.
+
 ### Icon path conflicts with reverse proxy
 
 The reverse proxy catches any request starting with `/Terminal/`. This means an icon at `Terminal/img/icon.png` would be forwarded to ttyd (which returns 404). The icon must live outside the proxy path — we use `img/subservice/terminal.png` instead.
