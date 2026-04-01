@@ -29,10 +29,12 @@
     border-top: 1px solid #444;
     align-items: center;
     padding: 0 4px;
+    padding-left: 8px;
     gap: 3px;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
+    z-index: 9999;
   }
   body.has-toolbar #toolbar { display: flex; }
 
@@ -44,10 +46,12 @@
     border-top: 1px solid #333;
     align-items: center;
     padding: 0 4px;
+    padding-left: 8px;
     gap: 3px;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
+    z-index: 9999;
   }
   body.has-toolbar.toolbar-expanded #toolbar-ext { display: flex; }
 
@@ -213,17 +217,8 @@
 
     // Prevent button from stealing focus from terminal
     btn.addEventListener('mousedown', function(e) { e.preventDefault(); });
-    btn.addEventListener('touchstart', function(e) { e.preventDefault(); }, {passive: false});
   });
 
-  // Handle touchend for more reliable mobile taps
-  document.querySelectorAll('.tb-btn[data-key]').forEach(function(btn) {
-    btn.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      sendKey(btn.dataset.key);
-      try { iframe.contentWindow.term.focus(); } catch(e) {}
-    });
-  });
 })();
 </script>
 </body>
