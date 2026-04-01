@@ -2,6 +2,52 @@
 
 This document covers ArozOS internals: how requests are routed, how the filesystem works, and how the AGI scripting engine fits together. This is reference material for understanding the system's behavior, not a how-to guide.
 
+## System Overview
+
+```mermaid
+graph TB
+    Client["Browser"]
+    
+    subgraph ArozOS["ArozOS Process"]
+        Router["mrouter\n(main.router.go)"]
+        Auth["Auth Check"]
+        StaticFS["Static File Server\nweb/*"]
+        AGI["AGI Gateway\n/system/ajgi/interface"]
+        SubProxy["Subservice\nReverse Proxy"]
+        WebDAV["WebDAV"]
+        Share["Share Manager"]
+        Serverless["Serverless\n/api/remote/*"]
+    end
+    
+    subgraph Subservices["Subservice Processes"]
+        ttyd["ttyd\n:12810"]
+        Other["Other subservices\n:12811+"]
+    end
+    
+    subgraph WebApps["Static Webapps (web/)"]
+        Desktop["desktop.html"]
+        Mobile["mobile.html"]
+        WebTerminal["WebTerminal/"]
+        Music["Music/"]
+        OtherApps["..."]
+    end
+    
+    Client -->|"HTTP/WS"| Router
+    Router -->|"Public paths\n(/img/public, /script)"| StaticFS
+    Router -->|"Not logged in"| Auth
+    Auth -->|"Redirect"| Login["login.html"]
+    Router -->|"Authenticated"| SubProxy
+    Router -->|"Authenticated"| StaticFS
+    Router -->|"POST /system/ajgi/..."| AGI
+    Router -->|/webdav| WebDAV
+    Router -->|/share| Share
+    Router -->|/api/remote| Serverless
+    SubProxy -->|"Proxy /Terminal/*"| ttyd
+    SubProxy -->|"Proxy /{endpoint}/*"| Other
+    StaticFS --> WebApps
+    WebTerminal -->|"iframe src=/Terminal/"| SubProxy
+```
+
 ## Request Routing
 
 All HTTP requests flow through `mrouter` (in `main.router.go`). The priority order determines what handles each request:

@@ -82,17 +82,6 @@ Without `web`, `system`, and `subservice` symlinks at the repo root pointing int
 
 See [UPSTREAM-MERGE-GUIDE.md](UPSTREAM-MERGE-GUIDE.md) for a complete list of structural divergences from upstream, conflict likelihood, and resolution strategies.
 
-## Documentation Map
+## Documentation
 
-| Topic | Location |
-|-------|----------|
-| Repo structure | [README.md](README.md) |
-| Build and run | [docs/quickstart.md](docs/quickstart.md) |
-| App development | [docs/apps-and-subservices.md](docs/apps-and-subservices.md) |
-| AGI scripting API | [docs/agi-reference.md](docs/agi-reference.md) |
-| Frontend API | [docs/frontend-api.md](docs/frontend-api.md) |
-| Configuration | [docs/configuration.md](docs/configuration.md) |
-| Deployment | [docs/deployment.md](docs/deployment.md) |
-| Architecture | [docs/architecture.md](docs/architecture.md) |
-| Terminal app | [src/web/WebTerminal/DEVELOPER.md](src/web/WebTerminal/DEVELOPER.md) |
-| Upstream merges | [UPSTREAM-MERGE-GUIDE.md](UPSTREAM-MERGE-GUIDE.md) |
+See the repo map and documentation index in [README.md](README.md).

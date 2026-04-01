@@ -64,7 +64,7 @@ Dockerfile                      Multi-stage Docker build
 ## What This Fork Adds
 
 - **Terminal subservice** — web-based shell via ttyd, accessible from the ArozOS desktop
-- **Mobile touch toolbar** — Tab, Ctrl-C, Esc, arrows, tmux macros, and more for phone use
+  - **Mobile touch toolbar** — Tab, Ctrl-C, Esc, arrows, tmux macros, and more for phone use
 - **Docker support** — multi-stage Dockerfile with ttyd included
 - **Developer documentation** — consolidated from scattered upstream sources into structured docs
 - **Declarative subservices** — `src/subservice/` is tracked in git for reproducible deployments
