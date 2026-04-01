@@ -2,6 +2,37 @@
 
 This document covers ArozOS internals: how requests are routed, how the filesystem works, and how the AGI scripting engine fits together. This is reference material for understanding the system's behavior, not a how-to guide.
 
+## Component Overview
+
+```mermaid
+block-beta
+  columns 3
+
+  block:client:1
+    columns 1
+    Browser
+  end
+
+  block:arozos:1
+    columns 1
+    A["ArozOS"]
+    B["mrouter"]
+    C["Auth"]
+    D["AGI Gateway"]
+    E["Subservice Proxy"]
+    F["Static File Server"]
+  end
+
+  block:backends:1
+    columns 1
+    G["Webapps (web/)"]
+    H["Subservices"]
+    I["Filesystem"]
+  end
+```
+
+Requests arrive from the browser, pass through ArozOS's router and auth layer, then are dispatched to one of three backend types: static webapps, reverse-proxied subservices, or the filesystem (via AGI). The sections below detail each path.
+
 ## Request Routing
 
 ```mermaid
