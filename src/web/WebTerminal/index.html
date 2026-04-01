@@ -135,9 +135,10 @@
 
 <script>
 (function() {
-  // Only show toolbar on touch devices
+  // Show toolbar on touch devices, or when viewport is narrow (mobile)
   const isTouch = window.matchMedia("(any-pointer: coarse)").matches;
-  if (!isTouch) return;
+  const isNarrow = window.innerWidth < 768;
+  if (!isTouch && !isNarrow) return;
 
   document.body.classList.add('has-toolbar');
 
