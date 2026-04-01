@@ -2,62 +2,22 @@
 
 This document covers ArozOS internals: how requests are routed, how the filesystem works, and how the AGI scripting engine fits together. This is reference material for understanding the system's behavior, not a how-to guide.
 
-## System Overview
-
-### Component Architecture
-
-```mermaid
-block-beta
-  columns 3
-
-  block:client:1
-    columns 1
-    Browser
-  end
-
-  block:arozos:1
-    columns 1
-    A["ArozOS"]
-    B["mrouter"]
-    C["Auth"]
-    D["AGI Gateway"]
-    E["Subservice Proxy"]
-    F["Static File Server"]
-  end
-
-  block:backends:1
-    columns 1
-    G["Webapps (web/)"]
-    H["Subservices"]
-    I["Filesystem"]
-  end
-
-  Browser --> A
-  E --> H
-  F --> G
-  D --> I
-```
-
-### Request Routing Flow
+## Request Routing
 
 ```mermaid
 flowchart LR
-    Req(["Incoming\nRequest"]) --> Public{"Public path?\n/img/public, /script,\nfavicon, manifest"}
-    Public -->|Yes| Serve["Serve static\nfile (no auth)"]
-    Public -->|No| Login{"Logged in?"}
-    Login -->|No| Redir["Redirect to\nlogin.html"]
-    Login -->|Yes| Special{"Special route?"}
-    Special -->|/webdav| WD["WebDAV"]
-    Special -->|/share| SH["Share Mgr"]
-    Special -->|/api/remote| SL["Serverless AGI"]
-    Special -->|None| SubCheck{"Matches subservice\nproxy endpoint?"}
-    SubCheck -->|Yes| Proxy["Reverse proxy\nto localhost:PORT"]
-    SubCheck -->|No| Static["Serve from\nweb/"]
+    Req(["Request"]) --> Public{"Public path?"}
+    Public -->|Yes| Serve["Static file\n(no auth)"]
+    Public -->|No| LoggedIn{"Logged in?"}
+    LoggedIn -->|No| Redir["→ login.html"]
+    LoggedIn -->|Yes| Special{"Special route?"}
+    Special -->|"/webdav"| WD["WebDAV"]
+    Special -->|"/share"| SH["Share Mgr"]
+    Special -->|"/api/remote"| SL["Serverless AGI"]
+    Special -->|No| SubCheck{"Subservice\nprefix match?"}
+    SubCheck -->|Yes| Proxy["Reverse proxy\n→ localhost:PORT"]
+    SubCheck -->|No| Static["Static file\nfrom web/"]
 ```
-
-The subservice proxy check runs before static file serving — this is why a subservice at `/Terminal/` intercepts requests even if matching files exist in `web/Terminal/`.
-
-## Request Routing
 
 All HTTP requests flow through `mrouter` (in `main.router.go`). The priority order determines what handles each request:
 
@@ -106,6 +66,40 @@ ArozOS injects `aouser` (username) and `aotoken` (session token) headers into al
 
 ## Filesystem Virtualization
 
+```mermaid
+flowchart TB
+    subgraph Virtual["Virtual Layer (what AGI scripts use)"]
+        user["user:/Desktop/file.txt"]
+        tmp["tmp:/upload.bin"]
+        custom["movie:/action/film.mp4"]
+    end
+
+    subgraph Abstraction["Abstraction Layer (fsh)"]
+        local["Local FS handler"]
+        webdav["WebDAV handler"]
+        smb["SMB handler"]
+        sftp["SFTP handler"]
+    end
+
+    subgraph Physical["Physical Layer"]
+        disk1["/home/aroz/arozos/files/users/..."]
+        remote1["https://example.com/webdav/..."]
+        remote2["192.168.0.110/MyShare/..."]
+        remote3["192.168.1.220:2022/..."]
+    end
+
+    user --> local
+    tmp --> local
+    custom --> local
+    custom --> webdav
+    custom --> smb
+    custom --> sftp
+    local --> disk1
+    webdav --> remote1
+    smb --> remote2
+    sftp --> remote3
+```
+
 ArozOS has three filesystem layers:
 
 | Layer | Path format | Example |
@@ -125,6 +119,26 @@ The virtualization layer (`user:/`, `tmp:/`, and custom storage pool IDs) is wha
 ---
 
 ## AGI Execution Model
+
+```mermaid
+sequenceDiagram
+    participant FE as Frontend
+    participant ArozOS
+    participant VM as Otto VM
+    participant Libs as AGI Libraries
+    participant FS as Filesystem
+
+    FE->>ArozOS: ao_module_agirun("MyApp/backend/api.js", {name: "Neon"})
+    ArozOS->>ArozOS: Authenticate request
+    ArozOS->>VM: Create VM, inject params as globals
+    VM->>Libs: requirelib("filelib")
+    Libs-->>VM: filelib functions available
+    VM->>FS: filelib.readdir("user:/Desktop/")
+    FS-->>VM: file list
+    VM->>ArozOS: sendJSONResp(result)
+    ArozOS->>ArozOS: Destroy VM
+    ArozOS-->>FE: JSON response
+```
 
 AGI (ArozOS Gateway Interface) is a server-side JavaScript engine powered by [Otto](https://github.com/robertkrimen/otto). It executes scripts in a sandboxed VM with access to ArozOS APIs.
 
@@ -160,6 +174,25 @@ See [AGI Reference](agi-reference.md) for the complete API.
 ---
 
 ## Subservice Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Scan: ArozOS startup
+    Scan --> ReadInfo: For each subservice dir
+    ReadInfo --> AssignPort: moduleInfo.json or -info flag
+    AssignPort --> Launch: Auto-increment from 12810
+    Launch --> ProxySetup: -port and -rpt flags
+    ProxySetup --> Running: filepath.Dir(StartDir) → proxy endpoint
+
+    Running --> HealthCheck: Periodic
+    HealthCheck --> Running: Responding
+    HealthCheck --> Kill: Not responding
+    Kill --> Restart: After 10 seconds
+    Restart --> Launch
+
+    Running --> Shutdown: ArozOS exit
+    Shutdown --> [*]: SIGKILL all children
+```
 
 1. **Startup scan:** ArozOS globs `./subservice/*/` and processes each directory.
 2. **Module info:** reads `moduleInfo.json` or calls the binary with `-info`.
