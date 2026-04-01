@@ -1,8 +1,9 @@
 # Aroz NixOS service module
 #
 # Configures ArozOS as a systemd service with:
-# - Immutable assets symlinked from the Nix store (web/, subservice/)
-# - Mutable state directory with version-gated seeding (system/)
+# - Immutable web assets symlinked from the Nix store
+# - Mutable copies of subservice/ and system/ with shebang patching
+#   (NixOS has no /bin/bash; scripts get #!/usr/bin/env bash)
 # - Sysadmin features disabled by default (hardware mgmt, discovery, pkg install)
 # - Process group management for subservice children (ttyd)
 #
@@ -163,27 +164,47 @@ in
       "d ${cfg.dataDir}/tmp      0755 ${cfg.user} ${cfg.group} -"
     ];
 
-    # Activation script: symlink immutable assets, seed mutable system/ dir.
+    # Activation script: symlink immutable assets, seed mutable dirs.
     system.activationScripts.aroz-assets = {
       text = ''
-        # Symlink immutable assets — always points to current package version.
-        ln -sfn "${pkg}/share/aroz/web" "${cfg.dataDir}/web"
-        ln -sfn "${pkg}/share/aroz/subservice" "${cfg.dataDir}/subservice"
+        # Ensure data dir exists (tmpfiles may not have run yet on first activation).
+        mkdir -p "${cfg.dataDir}/files" "${cfg.dataDir}/tmp"
 
-        # Seed system/ on first run. On upgrades, copy new files without
-        # overwriting existing state (databases, logs, configs).
+        # Symlink immutable web assets — always points to current package version.
+        ln -sfn "${pkg}/share/aroz/web" "${cfg.dataDir}/web"
+
         MARKER="${cfg.dataDir}/.aroz-pkg-version"
         CURRENT_VERSION="${pkg.version}"
 
+        NEEDS_UPDATE=false
+        if [ ! -f "$MARKER" ] || [ "$(cat "$MARKER")" != "$CURRENT_VERSION" ]; then
+          NEEDS_UPDATE=true
+        fi
+
+        # Subservice: mutable copy (not symlink) because NixOS lacks /bin/bash
+        # and start.sh scripts need shebang patching + the directory must be
+        # writable for ArozOS to manage subservice state.
+        if [ ! -d "${cfg.dataDir}/subservice" ] || [ "$NEEDS_UPDATE" = true ]; then
+          rm -rf "${cfg.dataDir}/subservice"
+          cp -r "${pkg}/share/aroz/subservice" "${cfg.dataDir}/subservice"
+          chmod -R u+w "${cfg.dataDir}/subservice"
+          # Patch shebangs: NixOS has no /bin/bash.
+          find "${cfg.dataDir}/subservice" -name '*.sh' -exec \
+            ${pkgs.gnused}/bin/sed -i 's|#!/bin/bash|#!/usr/bin/env bash|g' {} +
+          chown -R ${cfg.user}:${cfg.group} "${cfg.dataDir}/subservice"
+        fi
+
+        # Seed system/ on first run. On upgrades, copy new files without
+        # overwriting existing state (databases, logs, configs).
         if [ ! -d "${cfg.dataDir}/system" ]; then
-          # First run: copy everything
           cp -r "${pkg}/share/aroz/system" "${cfg.dataDir}/system"
           chown -R ${cfg.user}:${cfg.group} "${cfg.dataDir}/system"
-          echo "$CURRENT_VERSION" > "$MARKER"
-        elif [ ! -f "$MARKER" ] || [ "$(cat "$MARKER")" != "$CURRENT_VERSION" ]; then
-          # Upgrade: copy new files only (no-clobber)
+        elif [ "$NEEDS_UPDATE" = true ]; then
           cp -rn "${pkg}/share/aroz/system/." "${cfg.dataDir}/system/"
           chown -R ${cfg.user}:${cfg.group} "${cfg.dataDir}/system"
+        fi
+
+        if [ "$NEEDS_UPDATE" = true ]; then
           echo "$CURRENT_VERSION" > "$MARKER"
         fi
       '';
@@ -195,6 +216,10 @@ in
       description = "Aroz Web Desktop";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
+
+      # Ensure the system PATH is available so ArozOS can find utilities
+      # like `which`, `bash`, `du`, etc. that it shells out to.
+      path = with pkgs; [ bash coreutils which ];
 
       serviceConfig = {
         Type = "simple";
