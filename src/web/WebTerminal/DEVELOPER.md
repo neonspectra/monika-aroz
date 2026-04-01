@@ -170,4 +170,4 @@ The Dockerfile includes ttyd (`apt-get install ttyd`) and copies the `subservice
 
 - **Mobile line wrapping** (#2): ttyd doesn't receive correct terminal dimensions on ArozOS mobile UI, causing wrapped prompts to render incorrectly.
 - **Auto-close on exit**: Float window stays open after shell exits. Would need custom ttyd frontend or ArozOS window manager integration.
-- **Icon source**: `terminal.png` is from [dhanishgajjar/terminal-icons](https://github.com/dhanishgajjar/terminal-icons) (MIT License), noted in `start.sh`.
+- **Icon source**: `terminal.png` is the official Bash logo from [odb/official-bash-logo](https://github.com/odb/official-bash-logo) (MIT License), noted in `start.sh`.

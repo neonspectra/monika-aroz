@@ -2,8 +2,7 @@
 # ArozOS Terminal Subservice
 # Launches ttyd as a reverse-proxied subservice
 #
-# Icon: synthwave_option_6.png from https://github.com/dhanishgajjar/terminal-icons
-#       by Dhanish Gajjar (MIT License)
+# Icon: Official Bash logo from https://github.com/odb/official-bash-logo (MIT License)
 
 PORT=""
 
