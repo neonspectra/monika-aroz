@@ -4,49 +4,58 @@ This document covers ArozOS internals: how requests are routed, how the filesyst
 
 ## System Overview
 
+### Component Architecture
+
 ```mermaid
-graph TB
-    Client["Browser"]
-    
-    subgraph ArozOS["ArozOS Process"]
-        Router["mrouter\n(main.router.go)"]
-        Auth["Auth Check"]
-        StaticFS["Static File Server\nweb/*"]
-        AGI["AGI Gateway\n/system/ajgi/interface"]
-        SubProxy["Subservice\nReverse Proxy"]
-        WebDAV["WebDAV"]
-        Share["Share Manager"]
-        Serverless["Serverless\n/api/remote/*"]
-    end
-    
-    subgraph Subservices["Subservice Processes"]
-        ttyd["ttyd\n:12810"]
-        Other["Other subservices\n:12811+"]
-    end
-    
-    subgraph WebApps["Static Webapps (web/)"]
-        Desktop["desktop.html"]
-        Mobile["mobile.html"]
-        WebTerminal["WebTerminal/"]
-        Music["Music/"]
-        OtherApps["..."]
-    end
-    
-    Client -->|"HTTP/WS"| Router
-    Router -->|"Public paths\n(/img/public, /script)"| StaticFS
-    Router -->|"Not logged in"| Auth
-    Auth -->|"Redirect"| Login["login.html"]
-    Router -->|"Authenticated"| SubProxy
-    Router -->|"Authenticated"| StaticFS
-    Router -->|"POST /system/ajgi/..."| AGI
-    Router -->|/webdav| WebDAV
-    Router -->|/share| Share
-    Router -->|/api/remote| Serverless
-    SubProxy -->|"Proxy /Terminal/*"| ttyd
-    SubProxy -->|"Proxy /{endpoint}/*"| Other
-    StaticFS --> WebApps
-    WebTerminal -->|"iframe src=/Terminal/"| SubProxy
+block-beta
+  columns 3
+
+  block:client:1
+    columns 1
+    Browser
+  end
+
+  block:arozos:1
+    columns 1
+    A["ArozOS"]
+    B["mrouter"]
+    C["Auth"]
+    D["AGI Gateway"]
+    E["Subservice Proxy"]
+    F["Static File Server"]
+  end
+
+  block:backends:1
+    columns 1
+    G["Webapps (web/)"]
+    H["Subservices"]
+    I["Filesystem"]
+  end
+
+  Browser --> A
+  E --> H
+  F --> G
+  D --> I
 ```
+
+### Request Routing Flow
+
+```mermaid
+flowchart LR
+    Req(["Incoming\nRequest"]) --> Public{"Public path?\n/img/public, /script,\nfavicon, manifest"}
+    Public -->|Yes| Serve["Serve static\nfile (no auth)"]
+    Public -->|No| Login{"Logged in?"}
+    Login -->|No| Redir["Redirect to\nlogin.html"]
+    Login -->|Yes| Special{"Special route?"}
+    Special -->|/webdav| WD["WebDAV"]
+    Special -->|/share| SH["Share Mgr"]
+    Special -->|/api/remote| SL["Serverless AGI"]
+    Special -->|None| SubCheck{"Matches subservice\nproxy endpoint?"}
+    SubCheck -->|Yes| Proxy["Reverse proxy\nto localhost:PORT"]
+    SubCheck -->|No| Static["Serve from\nweb/"]
+```
+
+The subservice proxy check runs before static file serving — this is why a subservice at `/Terminal/` intercepts requests even if matching files exist in `web/Terminal/`.
 
 ## Request Routing
 
