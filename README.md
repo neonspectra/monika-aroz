@@ -2,7 +2,7 @@
 
 # monika-aroz
 
-Fork of [ArozOS](https://github.com/tobychui/arozos) — a web-based desktop operating system written in Go. This fork adds a Terminal subservice, mobile touch toolbar, developer documentation, and Docker support.
+Fork of [ArozOS](https://github.com/tobychui/arozos) — a web-based desktop operating system written in Go.
 
 ## Quick Start
 
@@ -67,7 +67,6 @@ Dockerfile                      Multi-stage Docker build
   - **Mobile touch toolbar** — Tab, Ctrl-C, Esc, arrows, tmux macros, and more for phone use
 - **Docker support** — multi-stage Dockerfile with ttyd included
 - **Developer documentation** — consolidated from scattered upstream sources into structured docs
-- **Declarative subservices** — `src/subservice/` is tracked in git for reproducible deployments
 
 ## Screenshots
 
