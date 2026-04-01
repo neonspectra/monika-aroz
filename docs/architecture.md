@@ -5,12 +5,14 @@ This document covers ArozOS internals: how requests are routed, how the filesyst
 ## Component Overview
 
 ```mermaid
-flowchart LR
-  subgraph Client
+block-beta
+  columns 3
+
+  block:client["Client"]:1
     Browser
   end
 
-  subgraph Core["ArozOS Core"]
+  block:arozos["ArozOS Core"]:1
     mrouter
     Auth
     AGI["AGI Gateway"]
@@ -18,7 +20,7 @@ flowchart LR
     StaticFS["Static File Server"]
   end
 
-  subgraph Backends
+  block:backends["Backends"]:1
     Webapps["Webapps (web/)"]
     Subservices
     Filesystem
