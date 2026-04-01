@@ -4,6 +4,14 @@
 
 Fork of [ArozOS](https://github.com/tobychui/arozos) — a web-based desktop operating system written in Go.
 
+## Use Case
+
+ArozOS is distinct from most other web desktops because it is not just a PWA frontend toy that lives exclusively in the browser. While the interface itself is a clientside progressive web app, ArozOS uses the server it runs on as a filesystem and service backend. For a more complete list of features, check out the [feature listing](docs/users/features.md).
+
+In practice, ArozOS has powerful and extensible management capabilities (akin to an overgrown home server dashboard) with direct access to backend server-side compute. This tool can touch the entire filesystem of the system that you run it on, and it has a built-in webshell straight out of the box, with all the security risks that implies.
+
+You should understand that anyone who access your ArozOS instance effectively has local user access on your server. User discretion is advised.
+
 ## Quick Start
 
 ```bash
