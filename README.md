@@ -29,6 +29,10 @@ README.md                       ← You are here
 AGENTS.md                       Agent-specific development guide
 UPSTREAM-MERGE-GUIDE.md         Structural divergences from upstream + merge strategy
 
+nix/
+├── package.nix                 Nix package derivation (buildGoModule + asset bundling)
+└── module.nix                  NixOS service module (services.aroz)
+
 docs/
 ├── quickstart.md               Build, run, first user, Docker
 ├── architecture.md             Request routing, filesystem layers, AGI model, internals
@@ -37,7 +41,8 @@ docs/
 │   └── storage-and-sharing.md  Storage pools, file sharing, network file servers
 ├── admins/
 │   ├── configuration.md        Startup flags, storage pools, vendor customization
-│   └── deployment.md           Install guides (Linux, Windows, Docker, systemd)
+│   ├── deployment.md           Install guides (Linux, Windows, Docker, systemd)
+│   └── nixos.md                Nix flake, NixOS module, packaging gotchas
 └── developers/
     ├── apps-and-subservices.md  Webapp + subservice development guide
     ├── agi-reference.md        Complete AGI server-side scripting API
@@ -72,6 +77,7 @@ Dockerfile                      Multi-stage Docker build
 | [Frontend API](docs/developers/frontend-api.md) | App developers | ao_module.js: windows, files, uploads, utilities |
 | [Configuration](docs/admins/configuration.md) | Admins/deployers | Startup flags, storage pools, vendor customization |
 | [Deployment](docs/admins/deployment.md) | Admins/deployers | Linux, Windows, Docker, systemd |
+| [NixOS](docs/admins/nixos.md) | Admins/deployers | Nix flake, NixOS module, packaging gotchas |
 | [Architecture](docs/architecture.md) | Contributors | Request routing, filesystem layers, AGI execution model |
 | [AGENTS.md](AGENTS.md) | AI agents | Testing strategies, process management, gotchas |
 | [Upstream Merge Guide](UPSTREAM-MERGE-GUIDE.md) | Maintainers | Structural divergences, conflict resolution |
@@ -81,6 +87,7 @@ Dockerfile                      Multi-stage Docker build
 - **Terminal subservice** — web-based shell via ttyd, accessible from the ArozOS desktop
   - **Mobile touch toolbar** — Tab, Ctrl-C, Esc, arrows, tmux macros, and more for phone use
 - **Docker support** — multi-stage Dockerfile with ttyd included
+- **NixOS flake** — `buildGoModule` package + NixOS service module with declarative configuration
 - **Developer documentation** — consolidated from scattered upstream sources into structured docs
 
 ## Screenshots
