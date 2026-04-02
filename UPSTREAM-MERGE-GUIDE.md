@@ -5,7 +5,7 @@ This fork diverges structurally from [upstream ArozOS](https://github.com/tobych
 ## Remotes
 
 ```
-origin    git@github.com:neonspectra/monika-aroz.git   (our fork)
+origin    git@github.com:spectrasecure/aroz.git      (our fork)
 upstream  https://github.com/tobychui/arozos            (tobychui's repo)
 ```
 

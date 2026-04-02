@@ -9,8 +9,8 @@
 ## Build and Run
 
 ```bash
-git clone git@github.com:neonspectra/monika-aroz.git
-cd monika-aroz
+git clone git@github.com:spectrasecure/aroz.git
+cd aroz
 
 # Build the binary
 cd src && go build -o ../arozos && cd ..
