@@ -188,9 +188,14 @@ in
           rm -rf "${cfg.dataDir}/subservice"
           cp -r "${pkg}/share/aroz/subservice" "${cfg.dataDir}/subservice"
           chmod -R u+w "${cfg.dataDir}/subservice"
-          # Patch shebangs: NixOS has no /bin/bash.
+          # Patch /bin/bash references: NixOS has no /bin/bash.
+          # Shebangs become #!/usr/bin/env bash (portable).
+          # Bare /bin/bash references (e.g. ttyd arguments) become the Nix bash path.
           find "${cfg.dataDir}/subservice" -name '*.sh' -exec \
-            ${pkgs.gnused}/bin/sed -i 's|#!/bin/bash|#!/usr/bin/env bash|g' {} +
+            ${pkgs.gnused}/bin/sed -i \
+              -e '1s|^#!/bin/bash|#!/usr/bin/env bash|' \
+              -e '2,$s|/bin/bash|${pkgs.bash}/bin/bash|g' \
+              {} +
           chown -R ${cfg.user}:${cfg.group} "${cfg.dataDir}/subservice"
         fi
 
