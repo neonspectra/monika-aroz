@@ -189,7 +189,7 @@
     'End':          '\x1b[F',
     'PgUp':         '\x1b[5~',
     'PgDn':         '\x1b[6~',
-    'Shift-Enter':  '\x1b[13;2u',  // CSI u encoding for Shift+Enter
+    'Shift-Enter':  '\x0a',        // Ctrl+J / linefeed — works through tmux to pi's newLine binding
     'Detach':       '\x02d',        // Ctrl-B then d
     'TmuxScroll':   '\x02[',        // Ctrl-B then [
   };
